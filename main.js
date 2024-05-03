@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     function setupBoard(){
         //board
         let board = document.getElementById("checkers-board");
-        board.style.minWidth = "400px";
+        board.style.minWidth = "300px";
         board.style.border = "2px solid pink";
         for(let i = 0; i < BOARD_HEIGHT; i++){
             board.insertAdjacentHTML("beforeend", `<div class="row" row-index="`+i+`" style="display:flex;"></div>`);
@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
                     color = "black";
                 }
                 row.insertAdjacentHTML("beforeend", `<div class="square" col-index="`+j+`" 
-                    style="width: 50px; 
-                    height: 50px; 
+                    style="width: 40px; 
+                    height: 40px; 
                     background-color: `+color+`;
                     display: flex;
                     justify-content: center;
@@ -49,8 +49,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
                     //for example (0, 1) and (1, 0) if i+j would both give 1, but with board height modifying the i then one maps to 1 the other to 8
                     //I've also added the "currColor" to both the class and the css
                     //set pointer events of the pieces to be none so it doesn't interfere with gameplay clicks on the squares
-                    squares[i*BOARD_HEIGHT+j].insertAdjacentHTML("afterBegin", `<div class="piece" piece-color="`+ currColor +`" style="width: 30px; 
-                    height: 30px; 
+                    squares[i*BOARD_HEIGHT+j].insertAdjacentHTML("afterBegin", `<div class="piece" piece-color="`+ currColor +`" style="width: 20px; 
+                    height: 20px; 
                     background-color:` + currColor + `;
                     border: 2px dotted black; border-radius: 100px;
                     pointer-events: none;
@@ -111,8 +111,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
                             currSquare.removeChild(currPiece);
                             //create new piece
                             let newSquare = getSquareFromCoords(moves[i][0], moves[i][1]);
-                            newSquare.insertAdjacentHTML("afterBegin", `<div class="piece" piece-color="`+ currColor +`"  style="width: 30px; 
-                            height: 30px; 
+                            newSquare.insertAdjacentHTML("afterBegin", `<div class="piece" piece-color="`+ currColor +`"  style="width: 20px; 
+                            height: 20px; 
                             background-color:` + currColor + `;
                             border: 2px dotted black; border-radius: 100px;
                             pointer-events: none;
@@ -136,24 +136,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
                         //get piece to eat, if its a different color eat it otherwise skip
                         let eatenSquare = getSquareFromCoords(currCoords[0] + (edibleMoves[i][0] - currCoords[0])/2, currCoords[1] + (edibleMoves[i][1] - currCoords[1])/2);
                         let eatenPiece = eatenSquare.firstElementChild;
-                        if(eatenPiece.getAttribute("piece-color") == currPlayer){
-                            continue;
+                        if(eatenPiece.getAttribute("piece-color") == P2_COLOR){
+                            num_white--;
                         }else{
-                            if(eatenPiece.getAttribute("piece-color") == P2_COLOR){
-                                num_white--;
-                            }else{
-                                num_red--;
-                            }
-                            eatenSquare.removeChild(eatenPiece);
+                            num_red--;
                         }
+                        eatenSquare.removeChild(eatenPiece);
     
                         //remove currPiece
                         let currSquare = currPiece.parentNode;
                         currSquare.removeChild(currPiece);
                         //create new piece
                         let newSquare = getSquareFromCoords(edibleMoves[i][0], edibleMoves[i][1]);
-                        newSquare.insertAdjacentHTML("afterBegin", `<div class="piece" piece-color="`+ currColor +`"  style="width: 30px; 
-                        height: 30px; 
+                        newSquare.insertAdjacentHTML("afterBegin", `<div class="piece" piece-color="`+ currColor +`"  style="width: 20px; 
+                        height: 20px; 
                         background-color:` + currColor + `;
                         border: 2px dotted black; border-radius: 100px;
                         pointer-events: none;
@@ -181,23 +177,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
                         break;
                     }
                 }
-    
-    
-                if(hasMoved){
-                    //reset global variables
-                    pieceSelected = false;
-                    currPiece = null;
-                    hasMoved = false;
-                }
-    
                 
     
                 //only gets here when a move is made
                 //when moved and can't double jump then switch turns
-                if(currPlayer == P2_COLOR && canDoubleJump == false){
+                if(hasMoved == true && currPlayer == P2_COLOR && canDoubleJump == false){
                     currPlayer = P1_COLOR;
-                }else if(currPlayer == P1_COLOR && canDoubleJump == false){
+                    pieceSelected = false;
+                    currPiece = null;
+                    hasMoved = false;
+                }else if(hasMoved == true && currPlayer == P1_COLOR && canDoubleJump == false){
                     currPlayer = P2_COLOR;
+                    pieceSelected = false;
+                    currPiece = null;
+                    hasMoved = false;
                 }
                 console.textContent = "Current Player: " + currPlayer;
 
@@ -265,20 +258,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
     
         //edible moves
         if(x+2 < BOARD_HEIGHT && y+2 < BOARD_WIDTH){
-            if(getSquareFromCoords(x+2, y+2).firstElementChild == null && getSquareFromCoords(x+1, y+1).firstElementChild != null)
+            if(getSquareFromCoords(x+2, y+2).firstElementChild == null && getSquareFromCoords(x+1, y+1).firstElementChild != null && getSquareFromCoords(x+1, y+1).firstElementChild.getAttribute("piece-color") != currPlayer)
                 edibleMoves.push([x+2, y+2]);
         }
         if(x+2 < BOARD_HEIGHT && y-2 >= 0){
-            if(getSquareFromCoords(x+2, y-2).firstElementChild == null && getSquareFromCoords(x+1, y-1).firstElementChild != null)
+            if(getSquareFromCoords(x+2, y-2).firstElementChild == null && getSquareFromCoords(x+1, y-1).firstElementChild != null && getSquareFromCoords(x+1, y-1).firstElementChild.getAttribute("piece-color") != currPlayer)
                 edibleMoves.push([x+2, y-2])
         }
         //move one row up
         if(x-2 >= 0 && y-2 >= 0){
-            if(getSquareFromCoords(x-2, y-2).firstElementChild == null && getSquareFromCoords(x-1, y-1).firstElementChild != null)
+            if(getSquareFromCoords(x-2, y-2).firstElementChild == null && getSquareFromCoords(x-1, y-1).firstElementChild != null && getSquareFromCoords(x-1, y-1).firstElementChild.getAttribute("piece-color") != currPlayer)
                 edibleMoves.push([x-2, y-2]);
         }
         if(x-2 >= 0 && y+2 < BOARD_WIDTH){
-            if(getSquareFromCoords(x-2, y+2).firstElementChild == null && getSquareFromCoords(x-1, y+1).firstElementChild != null)
+            if(getSquareFromCoords(x-2, y+2).firstElementChild == null && getSquareFromCoords(x-1, y+1).firstElementChild != null && getSquareFromCoords(x-1, y+1).firstElementChild.getAttribute("piece-color") != currPlayer)
                 edibleMoves.push([x-2, y+2]);
         }
     

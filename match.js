@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         //board
         let match_board = document.getElementById("match-board");
         // match_board.style.border = "2px solid black";
-        match_board.style.minWidth = "400px";
+        match_board.style.minWidth = "300px";
         match_board.style.border = "2px solid pink";
 
 
@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 let row = document.getElementsByClassName("match_row")[i];
                 let color = CARD_COLOR;
                 row.insertAdjacentHTML("beforeend", `<div class="card" hidden-color="`+random_color_list[i*(match_board_width) + j]+`" col-index="`+j+`" 
-                    style="width: 50px; 
-                    height: 50px; 
+                    style="width: 40px; 
+                    height: 40px; 
                     background-color: `+color+`;
                     display: flex;
                     justify-content: center;
